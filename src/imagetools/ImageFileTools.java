@@ -27,14 +27,14 @@ public class ImageFileTools {
         return imageArray;
     }
 
-    public static BufferedImage intToBI(int[][] pixelArray, ImageTools.ValueOperation valueOperation, int bufferedImageType) {
+    public static BufferedImage intToBI(int[][] pixelArray, PixelTools.ValueOperation valueOperation, int bufferedImageType) {
         int width = pixelArray.length;
         int height = pixelArray[0].length;
 
         BufferedImage bufferedImage = new BufferedImage(width, height, bufferedImageType);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                bufferedImage.setRGB(i, j, ImageTools.getValue(pixelArray[i][j], valueOperation));
+                bufferedImage.setRGB(i, j, PixelTools.getValue(pixelArray[i][j], valueOperation));
             }
         }
 
