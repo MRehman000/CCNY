@@ -20,7 +20,7 @@ public class AssignmentOne {
         BufferedImage originalImage = ImageFileTools.readImageToBI(ORIGINAL_IMAGE_FILE_PATH);
         ImageFileTools.displayAndSave(originalImage, BASE_SAVE_FILE_PATH + "01_original.bmp", "Original");
 
-        int[][] originalImageArray = ImageFileTools.biToIntArray(originalImage);
+        int[][] originalImageArray = ImageFileTools.biToIntArray(originalImage, PixelTools.identity);
 
         /* Red, Green, and Blue Value Images */
         BufferedImage redImage = ImageFileTools.intToBI(originalImageArray,
@@ -54,7 +54,7 @@ public class AssignmentOne {
         ImageFileTools.displayAndSave(luminosityImage, BASE_SAVE_FILE_PATH + "08_luminosity.bmp", "Luminosity");
 
         /* Quantized intensity images */
-        int[][] intensityImageArray = ImageFileTools.biToIntArray(intensityImage);
+        int[][] intensityImageArray = ImageFileTools.biToIntArray(intensityImage, PixelTools.identity);
 
         BufferedImage fourLevelIntensityImage = ImageFileTools.intToBI(intensityImageArray,
                 PixelTools.quantizedGrayRgbFromGrayRgb(4), BufferedImage.TYPE_INT_RGB);

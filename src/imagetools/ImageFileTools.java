@@ -13,14 +13,14 @@ import java.io.IOException;
 public class ImageFileTools {
 
     public static int[][] readImageToIntArray(String filepath) {
-        return biToIntArray(readImageToBI(filepath));
+        return biToIntArray(readImageToBI(filepath), PixelTools.identity);
     }
 
-    public static int[][] biToIntArray(BufferedImage image) {
+    public static int[][] biToIntArray(BufferedImage image, PixelTools.ValueOperation valueOperation) {
         int[][] imageArray = new int[image.getWidth()][image.getHeight()];
         for (int i = 0; i < image.getWidth(); i ++) {
             for (int j = 0; j < image.getHeight(); j++) {
-                imageArray[i][j] = image.getRGB(i, j);
+                imageArray[i][j] = PixelTools.getValue(image.getRGB(i, j), valueOperation);
             }
         }
 
@@ -39,6 +39,30 @@ public class ImageFileTools {
         }
 
         return bufferedImage;
+    }
+
+    public static BufferedImage biToBI(BufferedImage image, PixelTools.ValueOperation valueOperation, int bufferedImageType) {
+        int width = image.getWidth(), height = image.getHeight();
+
+        BufferedImage bufferedImage = new BufferedImage(width, height, bufferedImageType);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                bufferedImage.setRGB(i, j, PixelTools.getValue(image.getRGB(i, j), valueOperation));
+            }
+        }
+        return bufferedImage;
+    }
+
+    public static int[][] intArrayToIntArray(int[][] array, PixelTools.ValueOperation valueOperation) {
+        int width = array.length, height = array[0].length;
+
+        int[][] returnArray = new int[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                returnArray[i][j] = PixelTools.getValue(array[i][j], valueOperation);
+            }
+        }
+        return returnArray;
     }
 
     public static BufferedImage readImageToBI(String filepath) {
@@ -64,10 +88,40 @@ public class ImageFileTools {
     public static void saveImage(BufferedImage image, String path) {
         File file = new File(path);
         try {
-            ImageIO.write(image, "bmp", file);
+            ImageIO.write(image, "BMP", file);
         } catch (IOException e) {
             throw new RuntimeException("Could not save file! " + path + " ----> " + e);
         }
+    }
+
+    public static BufferedImage displayHistogram(float[] counts) {
+        int width = 768;
+        int height = 700;
+
+        BufferedImage histogram = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < width; i += 3) {
+            for (int j = 0; j < height; j++) {
+                if (i == width - 3) {
+                    for (int k = i; k < i + 3; k++) {
+                        if (j < ((((k - i)*(counts[(i/3)] - counts[i/3 - 1]))/3) + counts[i/3]) * 7) {
+                            histogram.setRGB(k, 699 - j, 0x000000);
+                        } else {
+                            histogram.setRGB(k, 699 - j, 0xFFFFFF);
+                        }
+                    }
+                } else {
+                    for (int k = i; k < i + 3; k++) {
+                        if (j < ((((k - i)*(counts[(i/3) + 1] - counts[i/3]))/3) + counts[i/3]) * 7) {
+                            histogram.setRGB(k, 699 - j, 0x000000);
+                        } else {
+                            histogram.setRGB(k, 699 - j, 0xFFFFFF);
+                        }
+                    }
+                }
+            }
+        }
+
+        return histogram;
     }
 
     public static void displayAndSave(BufferedImage image, String path, String title) {
