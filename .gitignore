@@ -7,3 +7,8 @@ idea/*
 *.xml
 src/.DS_STORE
 out/*
+*.aux
+*.log
+*.pdf
+*.out
+*.synctex.gz
