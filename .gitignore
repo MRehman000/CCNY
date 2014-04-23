@@ -5,7 +5,7 @@ idea/*
 *.bmp
 *.png
 *.xml
-src/.DS_STORE
+src/.DS_Store
 out/*
 *.aux
 *.log
