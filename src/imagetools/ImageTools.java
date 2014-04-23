@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
  */
 public class ImageTools {
     /* Use with square convolution matrices or 1x2 or 2x1 sized matrices */
-    public static int[][] convolution2d(int[][] array, int[][] mask, ConvolutionEnum type) {
+    public static int[][] convolution2d(int[][] array, int[][] mask, ConvolutionEnum type, double scale, boolean absoluteValue) {
         int[][] convolutedMatrix;
         int startRow, startColumn, endRow, endColumn;
         int maskWidth = mask.length, maskHeight = mask[0].length, arrayWidth = array.length, arrayHeight = array[0].length;
@@ -47,19 +47,61 @@ public class ImageTools {
                 }
                 if (type.equals(ConvolutionEnum.CREATE_LARGER_MATRIX)) {
                     if (i >= -1 && j >= -1 && i < arrayWidth + 1 && j < arrayHeight + 1) {
-                        convolutedMatrix[i + 1][j + 1] = sum;
+                        convolutedMatrix[i + 1][j + 1] = absoluteValue ? (int) Math.round(absoluteValue(sum) * scale) :
+                                                                            (int) Math.round(sum * scale);
                     }
                 } else {
-                    convolutedMatrix[i + offsetWidth][j + offsetHeight] = sum;
+                    if (scale < 1) {
+                        System.out.println((absoluteValue) ? (int) Math.round(absoluteValue(sum) * scale) + " - " + mask.length + " - " + scale :
+                                (int) Math.round(sum * scale) + " - " + mask.length + " - " + scale);
+                    }
+                    convolutedMatrix[i + offsetWidth][j + offsetHeight] = absoluteValue ?
+                                                                            (int) Math.round(absoluteValue(sum) * scale)
+                                                                            :(int) Math.round(sum * scale);
+
                 }
             }
         }
         return convolutedMatrix;
     }
 
-    public static int[][] get1x2() { return new int[][] {
+    private static int[][] generateSobelMask(int dimensions, int[][] mask, int[][] smoothingKernel) {
+        if (dimensions == mask.length) {
+            return mask;
+        } else  {
+            return generateSobelMask(dimensions,
+                    convolution2d(mask, smoothingKernel, ConvolutionEnum.CREATE_LARGER_MATRIX, 1, false), smoothingKernel);
+        }
+    }
 
-    };}
+    public static int[][] generateSobelMask(int dimensions) {
+        if (dimensions % 2 != 0 && dimensions > 2) {
+            int[][] threeByThree = new int[][] {
+                    {1, 0, -1},
+                    {2, 0, -2},
+                    {1, 0, -1}
+            };
+
+            return dimensions == 3 ? threeByThree : generateSobelMask(dimensions, threeByThree, new int[][]{
+                    {1, 2, 1},
+                    {2, 4, 2},
+                    {1, 2, 1}
+            });
+        }
+        throw new RuntimeException("Tried to generate an improper sobel mask of dimension " + dimensions);
+    }
+
+    /* Fooling around with the scaling factor generator can be fun */
+    public static double generateSobelScalingFactor(int dimensions) {
+        double scalingFactor = .75;
+        if (dimensions % 2 != 0 && dimensions > 2) {
+            for (int a = 3; a <= dimensions; a += 2) {
+                scalingFactor *= 0.25;
+            }
+            return scalingFactor;
+        }
+        throw new RuntimeException("Tried to generate an improper sobel scaling factor for dimension " + dimensions);
+    }
 
     public static float[] histogram(int[][] image) {
         int width = image.length;
@@ -80,6 +122,10 @@ public class ImageTools {
             histogram[i] = (histogram[i] * 100) / max;
         }
         return histogram;
+    }
+
+    private static int absoluteValue(int value) {
+        return (value < 0) ? value * -1 : value;
     }
 
 }

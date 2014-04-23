@@ -4,6 +4,8 @@ package imagetools;
  * Created by codyboppert on 4/15/14.
  */
 public class PixelTools {
+    static int PIXEL_VALUES = 255;
+
     @FunctionalInterface
     static interface ValueOperation {
         int pixelOperation(int pixelValue);
@@ -31,18 +33,20 @@ public class PixelTools {
     public static ValueOperation identity = (rgba) -> rgba;
 
     public static ValueOperation redFromRgb = (rgb) -> (rgb >> 16) & 0x000000FF;
-    public static ValueOperation rgbRedFromRedValue = (redValue) -> redValue << 16;
+    public static ValueOperation rgbRedFromRedValue = (redValue) -> redValue > PIXEL_VALUES ? PIXEL_VALUES : redValue  << 16;
     public static ValueOperation rgbRedFromRgbValue = (rgb) -> getValue(getValue(rgb, redFromRgb), rgbRedFromRedValue);
 
     public static ValueOperation blueFromRgb = (rgb) -> (rgb >> 8) & 0x000000FF;
-    public static ValueOperation rgbBlueFromBlueValue = (blueValue) -> blueValue;
+    public static ValueOperation rgbBlueFromBlueValue = (blueValue) -> blueValue > PIXEL_VALUES ? PIXEL_VALUES : blueValue;
     public static ValueOperation rgbBlueFromRgbValue = (rgb) -> getValue(getValue(rgb, blueFromRgb), rgbBlueFromBlueValue);
 
     public static ValueOperation greenFromRgb = (rgb) -> (rgb) & 0x000000FF;
-    public static ValueOperation rgbGreenFromGreenValue = (greenValue) -> greenValue << 8;
+    public static ValueOperation rgbGreenFromGreenValue = (greenValue) -> greenValue > PIXEL_VALUES ? PIXEL_VALUES : greenValue << 8;
     public static ValueOperation rgbGreenFromRgbValue = (rgb) -> getValue(getValue(rgb, greenFromRgb), rgbGreenFromGreenValue);
 
-    public static ValueOperation rgbGrayFromGrayValue = (grayValue) -> shiftAndOr(shiftAndOr(grayValue,grayValue),grayValue);
+    public static ValueOperation rgbGrayFromGrayValue = (grayValue) -> grayValue > 255 ?
+            shiftAndOr(shiftAndOr(255, 255), 255) :
+            shiftAndOr(shiftAndOr(grayValue,grayValue),grayValue);
     public static RgbOperation rgbFromValues = (r, g, b) -> shiftAndOr(shiftAndOr(r, g), b);
     public static RgbaOperation rgbaFromValues = (r, g, b, a) -> shiftAndOr(shiftAndOr(shiftAndOr(r,g),b),a);
     public static ValueOperation grayValueFromRgbGray = (rgbGrayValue) -> (rgbGrayValue) & 0x000000FF;

@@ -1,0 +1,189 @@
+\documentclass{jhwhw}
+\usepackage{amssymb,amsmath,graphicx}
+
+\begin{document}
+
+\title{Computer Vision - Assignment One}
+\author{Cody Boppert}
+
+\maketitle
+
+\section{Writing Assignments}
+
+\problem{Question 1}
+How does an image change (object size, field of view, etc) if the focal length of a pinhole camera is varied?
+\solution
+As the focal length of a pinhole camera increases the field of view decreases which means less of a figure is in focus but what is in focus will appear larger on the image. If you have a tree in perfect view of the pinhole camera such that the entirety of the tree is displayed on the image surface than increasing the focal length decreases the amount of tree which is viewable but makes that which is viewed larger on the image plane. If you decrease the focal length you will see the tree and what surrounds it but the tree will be smaller on the image plane.
+
+\problem{Question 2}
+Give an intuitive explanation of the reason why a pinhole camera has an infinite depth of field.
+\solution
+Because a pinhole camera relies on receiving a single ray of light from each point of its view, as an object in view moves further away from the pinhole the rays of converge to one point. This single point will still be transmuted properly onto the pinhole camera's image plane. This is in contrast with a lensed camera which requires multiple rays from each object for a clear picture.
+
+\problem{Question 3}
+In the thin lens model
+
+\begin{align*}
+\frac{1}{o} + \frac{1}{i} = \frac{1}{f}
+\end{align*}
+
+there are three variables:
+
+\begin{align*}
+f &= \mbox{Focal Length}\\
+o &= \mbox{Object Distance}\\
+i &= \mbox{Image Distance}
+\end{align*}
+
+If we define:
+\begin{align*}
+Z = o - f\\
+z = i - f\\
+\end{align*}
+
+Please describe the physical meanings of $Z$ and $z$ and show that $Z * z = f * f$.
+
+\solution
+$Z$ is the distance from the object to the lens.
+$z$ is the distance from the lens to the image plane.
+
+To show $Z * z = f * f$:
+
+Solve for $f$:
+\begin{align*}
+\frac{1}{o} + \frac{1}{i} &= \frac{1}{f}\\
+\frac{f}{o} + \frac{f}{i} &= \frac{f}{f}\\
+f(\frac{1}{o} + \frac{1}{i}) &= 1\\
+f &= \frac{1}{\frac{1}{o} + \frac{1}{i}}\\
+f &= \frac{1}{\frac{i}{io} + \frac{o}{io}}\\
+f &= \frac{1}{\frac{i + o}{io}}\\
+f &= \frac{1}{1} * \frac{io}{i + o}\\
+f &= \frac{io}{i + o}
+\end{align*}
+
+A simple $f*f$:
+\begin{align*}
+f * f &= \frac{io}{i + o} (\frac{io}{i + o})
+\end{align*}
+
+Solve for $Z * z$:
+\begin{align*}
+Z * z &= (o - f)(i - f)\\
+&= io - of - if + f^{2}\\
+\end{align*}
+
+Substitute for $f$:
+\begin{align*}
+&= io - o(\frac{io}{i + o}) - i(\frac{io}{i + o}) + \frac{io}{i + o} (\frac{io}{i + o})\\
+&= io - \frac{io^{2}}{i + o} - \frac{i^{2}o}{i + o} + \frac{io}{i + o} (\frac{io}{i + o})\\
+&= io - \frac{io^{2} + i^{2}o}{i + o} + \frac{io}{i + o} (\frac{io}{i + o})\\
+&= io(1 - \frac{o + 1}{o + i} + \frac{io}{(i + o)(i + o)}\\
+&= io(1 - 1 + \frac{io}{(i + o)(i + o)}\\
+&= io(\frac{io}{(i + o)(i + o)}\\
+&= \frac{io}{i + o}(\frac{io}{i + o})\\
+Z * z &= f * f
+\end{align*}
+
+\problem{Question 4}
+Show that, in the pinhole camera model, three collinear points in 3D space are imaged into three collinear points on the image plane.
+\solution
+Suppose in the field of view of the pinhole camera you have three objects $a$, $b$, and $c$. Each object has the same height $x$ and can be visualized simply as a vertical bar |. Each object stands a different distance from the pinhole. Let's say object $a$ has distance from pinhole $d1$. Object $b$ has distance $d2$ and object $c$ distance $d3$. We shall visualize a straight line connecting the feet of each object and that straight line is also a ray which enters the pinhole. We shall also visualize a straight line connecting the heads of each object which does not directly enter the camera pinhole. These two lines are of course, parallel. Now each object forms two separate right triangles. One is in relation to the pinhole with its points being the head of the object, foot of the object, and the pinhole. And one with its points being the head of the object on the image plane, the foot of the object on the image plane, and the pinhole. It is easy to visualize these triangles and see that the the three heads of the objects form a straight line when transmuted onto the image plane. Since a pinhole camera necessarily takes in a 3D view it is also easy to visualize turning your three objects and entering the pinhole from different angles. These new spatially orientated objects still broadcast to a straight line as well.
+
+\section{Programming Assignments}
+\problem{Question A}
+Read in a color image C1(x,y) = (R(x,y), G(x,y), B(x,y)) in Windows BMP format, and display it.
+\solution
+{\centering
+	\includegraphics[width=250px]{../Original.jpg}\par
+}
+
+\problem{Question B}
+Display the images of the three color components, R(x,y), G(x,y) and B(x,y), separately. You should display three black-white-like images.
+\solution
+\part
+Red:
+{\centering
+	\includegraphics[width=250px]{../Red.jpg}\par
+}
+
+\part
+Green:
+{\centering
+	\includegraphics[width=250px]{../Green.jpg}\par
+}
+
+\part
+Blue:
+{\centering
+	\includegraphics[width=250px]{../Blue.jpg}\par
+}
+
+\problem{Question C}
+Generate an intensity image I(x,y) and display it. You should use the equation I = 0.299R + 0.587G + 0.114B (the NTSC standard for luminance).
+\solution
+{\centering
+	\includegraphics[width=250px]{../ColorIntensity.jpg}\par
+}
+
+\problem{Question D}
+The original intensity image should have 256 gray levels.  Please uniformly quantize this image into K levels ( K=4, 16, 32, 64).  As an example,  when K=2 ,  pixels Whose values are below 128 are turned to 0,  otherwise to 255.  Display the four quantized images and tell us  what images still look like the original ones.
+
+\solution
+\part
+K = 4:
+{\centering
+	\includegraphics[width=250px]{../FourBandsGray.jpg}
+}
+
+\part
+K = 16:
+{\centering
+	\includegraphics[width=250px]{../SixteenBandsGray.jpg}
+}
+
+\part
+K = 32:
+{\centering
+	\includegraphics[width=250px]{../ThirtyTwoBandsGray.jpg}
+}
+
+\part
+K = 64:
+{\centering
+	\includegraphics[width=250px]{../SixtyFourBandsGray.jpg}
+}
+
+\part
+In all of the images you can see a semblance to the original image. When K=4 there is very little detail and you can make out that the picture is a picture of a person but not much else. As K increases you can see drastic jumps in detail. K=16 seems enough to distinguish almost all features and K=64 looks like a relatively fair quality black and white image. K=32 is just a bit more granular than K=64.
+
+\problem{Question E}
+Quantize  the original three-band color image C1(x,y) into K level color images CK(x,y)= (R?(x,y), G?(x,y), B?(x,y)) (with uniform intervals) , and display them. You may choose K=2 and 4 (for each band).
+
+\solution
+\part
+K = 2:
+{\centering
+	\includegraphics[width=250px]{../TwoBandsColor.jpg}
+}
+
+\part
+K = 4:
+{\centering
+	\includegraphics[width=250px]{../FourBandsColor.jpg}
+}
+
+\problem{Question F}
+Quantize  the original three-band color image C1(x,y) into a color image CL(x,y)= (R?(x,y), G?(x,y), B?(x,y)) (with a logarithmic function) , and display it. You may choose  a function  I' =C ln (I+1) ( for each band), where I is the original value (0~255) , I' is the quantized value,  and C is a constant to scale I'  into (0~255), and ln is the natural logarithm. Note that when I = 0, I' = 0 too.
+
+\part
+{\centering
+	\includegraphics[width=250px]{../LogarithmicIntensityColor.jpg}
+}
+
+\problem{Question G}
+Please give your conclusions for this experiment and write them into your paper submissions.
+
+\solution
+I have drawn a few conclusions from this experiment. The first is that not many colors are required for a relatively high quality picture where a high quality picture is one where most semi-fine details my be made out. The second is that seemingly small (although, in some cases exponential) jumps in the variety of tones of an image can drastically increase view ability and decrease granularity. The third is that any of the individual color spectrums (red, green, or blue) is enough on its own to create a black and white like image with all major and semi-fine details present. In this way one can come to more understanding with the color blind. The fifth is that color images with a small number of bands per color may reproduce an image reasonably in concerns to details but very oddly with respect to color. Finally the logarithmic intensity image gives us insight into how certain tools in photoshop work and we can observe that it maintains a high level of detail with little granularity but much lighter colors than the original image. Finally I have concluded that this was one of the coolest homework's I've done. Cheers!
+
+\end{document}

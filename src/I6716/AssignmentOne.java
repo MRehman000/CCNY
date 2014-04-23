@@ -11,8 +11,8 @@ import java.awt.image.BufferedImage;
  */
 public class AssignmentOne {
 
-    private static final String BASE_FILE_PATH = "/Users/codyboppert/Workspace/CCNY/i6716 - Computer Vision/AssignmentOne/";
-    private static final String BASE_SAVE_FILE_PATH = BASE_FILE_PATH + "images/";
+        private static final String BASE_FILE_PATH = "/Users/codyboppert/IdeaProjects/CCNY/src/I6716/Images/";
+    private static final String BASE_SAVE_FILE_PATH = BASE_FILE_PATH + "AssignmentOne/";
     private static final String ORIGINAL_IMAGE_FILE_PATH = BASE_FILE_PATH + "IDPicture.bmp";
 
     public static void main(String... args) {

@@ -1,5 +1,7 @@
 package imagetools;
 
+import utilities.MathTools;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -63,6 +65,19 @@ public class ImageFileTools {
             }
         }
         return returnArray;
+    }
+
+    public static int[][] combineIntArrays(int[][] array, int[][] arrayTwo, MathTools.BinaryOp binaryOp) {
+        int width = array.length < arrayTwo.length ? array.length : arrayTwo.length;
+        int height = array[0].length < arrayTwo[0].length ? array[0].length : arrayTwo[0].length;
+        int[][] combined = new int[width][height];
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                combined[i][j] = MathTools.op(array[i][j], arrayTwo[i][j], binaryOp);
+            }
+        }
+        return combined;
     }
 
     public static BufferedImage readImageToBI(String filepath) {
