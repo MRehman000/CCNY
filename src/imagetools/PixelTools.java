@@ -15,6 +15,12 @@ public class PixelTools {
     }
 
     @FunctionalInterface
+    static interface TwoValueOperation {
+        int twoValueOperation(int a, int b);
+    }
+    static int getValue(int a, int b, TwoValueOperation operation) { return operation.twoValueOperation(a, b);}
+
+    @FunctionalInterface
     static interface RgbOperation {
         int rgbOperation(int red, int green, int blue);
     }
@@ -71,6 +77,20 @@ public class PixelTools {
     public static ValueOperation luminosityFromRgb = (rgb) -> (int) Math.round(0.21 * getValue(rgb, redFromRgb) +
             0.71 * getValue(rgb, greenFromRgb) + 0.07 * getValue(rgb, blueFromRgb));
     public static ValueOperation rgbLuminosityFromRgb = (rgb) -> getValue(getValue(rgb, luminosityFromRgb), rgbGrayFromGrayValue);
+
+    public static TwoValueOperation valueDifference = (a, b) -> a - b;
+    public static TwoValueOperation absValueDifference = (a, b) -> {
+        int difference = getValue(a, b, valueDifference);
+        return difference < 0 ? difference * -1 : difference;
+    };
+    public static TwoValueOperation rgbDifference = (a, b) -> getValue(getValue(a, redFromRgb), getValue(b, redFromRgb), valueDifference) +
+            getValue(getValue(a, blueFromRgb), getValue(b, blueFromRgb), valueDifference) +
+            getValue(getValue(a, greenFromRgb), getValue(b, greenFromRgb), valueDifference);
+    public static TwoValueOperation absRgbDifference = (a, b) -> getValue(a, b, rgbDifference);
+    public static TwoValueOperation absAbsrgbDifference = (a, b) -> getValue(getValue(a, redFromRgb),
+            getValue(b, redFromRgb), absValueDifference) +
+            getValue(getValue(a, blueFromRgb), getValue(b, blueFromRgb), absValueDifference) +
+            getValue(getValue(a, greenFromRgb), getValue(b, greenFromRgb), absValueDifference);
 
     public static ValueOperation quantizedValue(int intervals) {
         return (value) -> {

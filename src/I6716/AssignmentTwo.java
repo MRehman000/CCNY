@@ -47,15 +47,25 @@ public class AssignmentTwo {
 
 
         /* generate Sobel images */
-        int index = 6;
-        for (int i = 3; i <= 9; i += 2) {
+        /* Fun to fool around with the scaling factor generator */
+        int[][] sobel3x3 = ImageTools.convolution2d(intensityImage, ImageTools.generateSobelMask(3),
+                ConvolutionEnum.COVER_ALL_POINTS, ImageTools.generateSobelScalingFactor(3), true);
+        ImageFileTools.displayAndSave(ImageFileTools.intToBI(sobel3x3, PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB),
+                BASE_SAVE_FILE_PATH + "06" + "_sobel3x3.bmp", "Sobel 3x3");
+
+        int index = 7;
+        for (int i = 5; i <= 9; i += 2) {
             ImageFileTools.displayAndSave(ImageFileTools.intToBI(ImageTools.convolution2d(
                     intensityImage, ImageTools.generateSobelMask(i), ConvolutionEnum.COVER_ALL_POINTS,
                     ImageTools.generateSobelScalingFactor(i), true), PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB),
-                    BASE_SAVE_FILE_PATH + "0" + index + "_sobel" + i + "x" + i,
+                    BASE_SAVE_FILE_PATH + "0" + index + "_sobel" + i + "x" + i + ".bmp",
                     "Sobel " + i + "x" + i);
             index++;
         }
+
+        /* Subtract sobel from 1x2 */
+        
+
 
     }
 
