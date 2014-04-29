@@ -22,6 +22,8 @@ public class MathTools {
 
     public static BinaryOp add = (a, b) -> a + b;
 
+    public static BinaryOp addTo255 = (a, b) -> a + b > 255 ? 255 : a + b;
 
+    public static BinaryOp subtractToZero = (a, b) -> a - b > 0 ? a - b : 0;
 
 }

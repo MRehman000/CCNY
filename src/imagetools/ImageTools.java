@@ -1,13 +1,15 @@
 package imagetools;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by codyboppert on 4/20/14.
  */
 public class ImageTools {
     /* Use with square convolution matrices or 1x2 or 2x1 sized matrices */
-    public static int[][] convolution2d(int[][] array, int[][] mask, ConvolutionEnum type, double scale, boolean absoluteValue) {
+    public static int[][] convolution2d(int[][] array, int[][] mask, ConvolutionEnum type, double scale, boolean absoluteValue, PixelTools.TwoValueOperation operation) {
         int[][] convolutedMatrix;
         int startRow, startColumn, endRow, endColumn;
         int maskWidth = mask.length, maskHeight = mask[0].length, arrayWidth = array.length, arrayHeight = array[0].length;
@@ -41,7 +43,7 @@ public class ImageTools {
                 for (int k = -(offsetWidth); k <= (maskWidth == 2 ? 0 : offsetWidth); k++) {
                     for (int l = -(offsetHeight); l <= (maskHeight == 2 ? 0 : offsetHeight); l++) {
                         if (i + k >= 0 && j + l >= 0 && i + k < arrayWidth && j + l < arrayHeight) {
-                            sum += array[i + k][j + l] * mask[k + offsetWidth][l + offsetHeight];
+                            sum += operation.twoValueOperation(array[i + k][j + l],mask[k + offsetWidth][l + offsetHeight]);
                         }
                     }
                 }
@@ -51,14 +53,9 @@ public class ImageTools {
                                                                             (int) Math.round(sum * scale);
                     }
                 } else {
-                    if (scale < 1) {
-                        System.out.println((absoluteValue) ? (int) Math.round(absoluteValue(sum) * scale) + " - " + mask.length + " - " + scale :
-                                (int) Math.round(sum * scale) + " - " + mask.length + " - " + scale);
-                    }
                     convolutedMatrix[i + offsetWidth][j + offsetHeight] = absoluteValue ?
                                                                             (int) Math.round(absoluteValue(sum) * scale)
                                                                             :(int) Math.round(sum * scale);
-
                 }
             }
         }
@@ -70,16 +67,20 @@ public class ImageTools {
             return mask;
         } else  {
             return generateSobelMask(dimensions,
-                    convolution2d(mask, smoothingKernel, ConvolutionEnum.CREATE_LARGER_MATRIX, 1, false), smoothingKernel);
+                    convolution2d(mask, smoothingKernel, ConvolutionEnum.CREATE_LARGER_MATRIX, 1, false, PixelTools.multiplication), smoothingKernel);
         }
     }
 
-    public static int[][] generateSobelMask(int dimensions) {
+    public static int[][] generateSobelMask(int dimensions, boolean vertical) {
         if (dimensions % 2 != 0 && dimensions > 2) {
-            int[][] threeByThree = new int[][] {
+            int[][] threeByThree = vertical ? new int[][] {
                     {1, 0, -1},
                     {2, 0, -2},
                     {1, 0, -1}
+            } : new int[][] {
+                    {1, 2, 1},
+                    {0, 0, 0},
+                    {-1, -2, -1}
             };
 
             return dimensions == 3 ? threeByThree : generateSobelMask(dimensions, threeByThree, new int[][]{
@@ -93,14 +94,15 @@ public class ImageTools {
 
     /* Fooling around with the scaling factor generator can be fun */
     public static double generateSobelScalingFactor(int dimensions) {
-        double scalingFactor = .75;
-        if (dimensions % 2 != 0 && dimensions > 2) {
-            for (int a = 3; a <= dimensions; a += 2) {
-                scalingFactor *= 0.25;
+        double scalingFactor = .25;
+        if (dimensions % 2 != 0 && dimensions > 3) {
+            for (int a = 3; a < dimensions; a += 2) {
+                scalingFactor *= .5;
             }
             return scalingFactor;
+        } else {
+            return scalingFactor;
         }
-        throw new RuntimeException("Tried to generate an improper sobel scaling factor for dimension " + dimensions);
     }
 
     public static float[] histogram(int[][] image) {
@@ -124,8 +126,52 @@ public class ImageTools {
         return histogram;
     }
 
+    public static int[][] edgeMapFromHistogramAndImage(float[] histogram, int[][] imageArray,
+                                                       PixelTools.ValueOperation valueOperation, int percent) {
+
+        int[][] image = new int[imageArray.length][imageArray[0].length];
+        for (int i = 0; i < imageArray.length; i++) {
+            for (int j = 0; j < imageArray[0].length; j++) {
+                image[i][j] = imageArray[i][j];
+            }
+        }
+        int numberOfValues = (int) Math.round(percent * 2.5);
+        float[][] values = new float[numberOfValues][2];
+        for (int i = 0; i < histogram.length; i++) {
+            int index = numberOfValues - 1;
+            float value = histogram[i];
+            while (index >= 0 && value > values[index][1]) {
+                if (index == numberOfValues - 1) {
+                    values[index][1] = value;
+                    values[index][0] = i;
+                    index--;
+                } else {
+                    values[index + 1][1] = values[index][1];
+                    values[index + 1][0] = values[index][0];
+                    values[index][1] = value;
+                    values[index][0] = i;
+                    index--;
+                }
+            }
+        }
+        /* Convert to list for contains method */
+        List<Integer> valuesList = new ArrayList<Integer>();
+        for (int i = 0; i < numberOfValues; i++) {
+            valuesList.add(Math.round(values[i][0]));
+        }
+        for(int i = 0; i < image.length; i++) {
+            for (int j = 0; j < image[0].length; j++) {
+                if(valuesList.contains(image[i][j])) {
+                    image[i][j] = 255;
+                } else {
+                    image[i][j] = 0;
+                }
+            }
+        }
+        return image;
+    }
+
     private static int absoluteValue(int value) {
         return (value < 0) ? value * -1 : value;
     }
-
 }
