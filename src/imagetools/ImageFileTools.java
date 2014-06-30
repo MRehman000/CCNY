@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 
 /**
  * Created by codyboppert on 4/20/14.
@@ -103,7 +104,7 @@ public class ImageFileTools {
     public static void saveImage(BufferedImage image, String path) {
         File file = new File(path);
         try {
-            ImageIO.write(image, "BMP", file);
+            ImageIO.write(image, "PNG", file);
         } catch (IOException e) {
             throw new RuntimeException("Could not save file! " + path + " ----> " + e);
         }
@@ -142,6 +143,16 @@ public class ImageFileTools {
     public static void displayAndSave(BufferedImage image, String path, String title) {
         displayImage(image, title);
         saveImage(image, path);
+    }
+
+    public static BufferedImage resizeBufferedImage(BufferedImage image, int width, int height) {
+        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        Graphics g = resized.createGraphics();
+        g.drawImage(image, 0, 0, width, height, null);
+        g.dispose();
+
+        return resized;
     }
 
 }

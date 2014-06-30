@@ -97,7 +97,7 @@ public class ImageTools {
         double scalingFactor = .25;
         if (dimensions % 2 != 0 && dimensions > 3) {
             for (int a = 3; a < dimensions; a += 2) {
-                scalingFactor *= .5;
+                scalingFactor *= .1;
             }
             return scalingFactor;
         } else {

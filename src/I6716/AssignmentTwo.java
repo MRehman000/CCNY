@@ -21,18 +21,24 @@ public class AssignmentTwo {
         int index = 1;
         long time = System.nanoTime();
 
-        /* Read original image to array, convert, save and display after converting to Buffered Image */
+        /* Read original image to array, deconvert, save and display after converting to Buffered Image */
         int[][] originalImageArray = ImageFileTools.readImageToIntArray(ORIGINAL_IMAGE_FILE_PATH);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(originalImageArray, PixelTools.identity, BufferedImage.TYPE_INT_RGB)
-                , BASE_SAVE_FILE_PATH + index(index) + "_original.bmp", "Original");
+                , BASE_SAVE_FILE_PATH + index(index) + "_original.png", "Original");
         printTimeDiff(time, "Generate, display, and save original image - ");
         time = System.nanoTime();
         index++;
 
         /* Generate histogram by converting to intensity image */
         int[][] intensityImage = ImageFileTools.intArrayToIntArray(originalImageArray, PixelTools.intensityFromRgb);
+
+        ImageFileTools.displayAndSave(ImageFileTools.intToBI(
+                intensityImage, PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB),
+                BASE_SAVE_FILE_PATH + index(index) + "_intensity.png", "Intensity Image");
+
+        index++;
         ImageFileTools.displayAndSave(ImageFileTools.displayHistogram(ImageTools.histogram(intensityImage)),
-                BASE_SAVE_FILE_PATH + index(index) + "_histogram.bmp", "Histogram of Original Image by Intensity");
+                BASE_SAVE_FILE_PATH + index(index) + "_histogram.png", "Histogram of Original Image by Intensity");
         printTimeDiff(time, "Generate intensity image, generate histogram, display and save histogram image - ");
         time = System.nanoTime();
         index++;
@@ -41,7 +47,7 @@ public class AssignmentTwo {
         int[][] twoByOne = ImageTools.convolution2d(intensityImage, new int[][]{{1, -1}}, ConvolutionEnum.COVER_ALL_POINTS, 1, true, PixelTools.multiplication);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(
                 twoByOne,PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB)
-                , BASE_SAVE_FILE_PATH + index(index) + "_2x1.bmp", "2x1");
+                , BASE_SAVE_FILE_PATH + index(index) + "_2x1.png", "2x1");
         printTimeDiff(time, "Generate, display, and save 2x1 gradient - ");
         time = System.nanoTime();
         index++;
@@ -49,7 +55,7 @@ public class AssignmentTwo {
         int[][] oneByTwo = ImageTools.convolution2d(intensityImage, new int[][]{{1},{-1}}, ConvolutionEnum.COVER_ALL_POINTS, 1, true, PixelTools.multiplication);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(oneByTwo,
                 PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB)
-                , BASE_SAVE_FILE_PATH + index(index) + "_1x2.bmp", "1x2");
+                , BASE_SAVE_FILE_PATH + index(index) + "_1x2.png", "1x2");
         printTimeDiff(time, "Generate, display, and save 1x2 gradient - ");
         time = System.nanoTime();
         index++;
@@ -57,7 +63,7 @@ public class AssignmentTwo {
         int[][] combinedGradientOperators = ImageFileTools.combineIntArrays(twoByOne, oneByTwo, MathTools.add);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(
                 combinedGradientOperators, PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB)
-                , BASE_SAVE_FILE_PATH + index(index) + "_combinedGradientOperators.bmp", "Combined Gradient Operators");
+                , BASE_SAVE_FILE_PATH + index(index) + "_combinedGradientOperators.png", "Combined Gradient Operators");
         printTimeDiff(time, "combine, display and save combined gradient - ");
         time = System.nanoTime();
         index++;
@@ -71,7 +77,7 @@ public class AssignmentTwo {
                         ConvolutionEnum.COVER_ALL_POINTS, ImageTools.generateSobelScalingFactor(3), true, PixelTools.multiplication),
                 MathTools.add);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(sobel3x3, PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB),
-                BASE_SAVE_FILE_PATH + index(index) + "_sobel3x3.bmp", "Sobel 3x3");
+                BASE_SAVE_FILE_PATH + index(index) + "_sobel3x3.png", "Sobel 3x3");
         printTimeDiff(time, "Generate horizontal sobel, generate vertical sobel, combine sobels, display, and save - ");
         time = System.nanoTime();
         index++;
@@ -82,7 +88,7 @@ public class AssignmentTwo {
         );
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(sobelMinusGradient,
                 PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB
-        ), BASE_SAVE_FILE_PATH + "0" + index + "_sobel_minus_gradient.bmp", "Sobel Minus Gradient");
+        ), BASE_SAVE_FILE_PATH + "0" + index + "_sobel_minus_gradient.png", "Sobel Minus Gradient");
         printTimeDiff(time, "Subtract 1x2 from sobel, display, and save - ");
         time = System.nanoTime();
         index++;
@@ -91,7 +97,7 @@ public class AssignmentTwo {
         float[] sobelHistogram = ImageTools.histogram(ImageFileTools.intArrayToIntArray(
                 sobel3x3, PixelTools.grayValueFromRgbGray));
         ImageFileTools.displayAndSave(ImageFileTools.displayHistogram(sobelHistogram),
-                BASE_SAVE_FILE_PATH + index(index) + "_sobelHistogram.bmp", "Sobel Histogram");
+                BASE_SAVE_FILE_PATH + index(index) + "_sobelHistogram.png", "Sobel Histogram");
         printTimeDiff(time, "Generate sobel histogram, display and save - ");
         time = System.nanoTime();
         index++;
@@ -99,7 +105,7 @@ public class AssignmentTwo {
         float[] gradientHistogram = ImageTools.histogram(ImageFileTools.intArrayToIntArray(
                 combinedGradientOperators, PixelTools.grayValueFromRgbGray));
         ImageFileTools.displayAndSave(ImageFileTools.displayHistogram(gradientHistogram),
-                BASE_SAVE_FILE_PATH + index(index) + "_gradientHistogram.bmp", "Gradient Histogram");
+                BASE_SAVE_FILE_PATH + index(index) + "_gradientHistogram.png", "Gradient Histogram");
         printTimeDiff(time, "Generate gradient histogram, display and save - ");
         time = System.nanoTime();
         index++;
@@ -107,7 +113,7 @@ public class AssignmentTwo {
         float[] sobelMinusGradientHistogram = ImageTools.histogram(ImageFileTools.intArrayToIntArray(
                 sobelMinusGradient, PixelTools.grayValueFromRgbGray));
         ImageFileTools.displayAndSave(ImageFileTools.displayHistogram(sobelMinusGradientHistogram),
-                BASE_SAVE_FILE_PATH + index(index) + "_sobelMinusGradientHistogram.bmp",
+                BASE_SAVE_FILE_PATH + index(index) + "_sobelMinusGradientHistogram.png",
                 "Sobel Minus Gradient Histogram");
 
         printTimeDiff(time, "Generate histogram from Sobel - 1x2, display, and save - ");
@@ -120,7 +126,7 @@ public class AssignmentTwo {
                                     sobelHistogram, sobel3x3, PixelTools.grayValueFromRgbGray, i),
                             PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB
                     ),
-                    BASE_SAVE_FILE_PATH + index(index) + "_sobelEdgeMap" + i + "percent.bmp",
+                    BASE_SAVE_FILE_PATH + index(index) + "_sobelEdgeMap" + i + "percent.png",
                     "Sobel Edge Map - " + i + "percent"
             );
             printTimeDiff(time, "Generate edge map from Sobel with " + i + " + percent of values, display, and save - ");
@@ -133,7 +139,7 @@ public class AssignmentTwo {
                                     gradientHistogram, combinedGradientOperators, PixelTools.grayValueFromRgbGray, i),
                             PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB
                     ),
-                    BASE_SAVE_FILE_PATH + index(index) + "_gradientEdgeMap" + i + "percent.bmp",
+                    BASE_SAVE_FILE_PATH + index(index) + "_gradientEdgeMap" + i + "percent.png",
                     "Gradient Edge Map - " + i + " percent"
             );
             printTimeDiff(time, "Generate edge map from Gradient with " + i + " + percent of values, display, and save - ");
@@ -146,7 +152,7 @@ public class AssignmentTwo {
                                     sobelMinusGradientHistogram, sobelMinusGradient, PixelTools.grayValueFromRgbGray, i),
                             PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB
                     ),
-                    BASE_SAVE_FILE_PATH + index(index) + "_sobelMinusGradientEdgeMap" + i + "percent.bmp",
+                    BASE_SAVE_FILE_PATH + index(index) + "_sobelMinusGradientEdgeMap" + i + "percent.png",
                     "Sobel Minus Gradient Edge Map - " + i + "percent"
             );
             printTimeDiff(time, "Generate edge map from Sobel with " + i + " percent of values, display, and save - ");
@@ -164,7 +170,7 @@ public class AssignmentTwo {
                                     ImageTools.convolution2d(intensityImage, ImageTools.generateSobelMask(i, false),
                                             ConvolutionEnum.COVER_ALL_POINTS, ImageTools.generateSobelScalingFactor(i), true, PixelTools.multiplication),
                                     MathTools.add), PixelTools.rgbGrayFromGrayValue, BufferedImage.TYPE_INT_RGB),
-                    BASE_SAVE_FILE_PATH + index(index) + "_sobel" + i + "x" + i + ".bmp",
+                    BASE_SAVE_FILE_PATH + index(index) + "_sobel" + i + "x" + i + ".png",
                     "Sobel " + i + "x" + i);
             printTimeDiff(time, "Generate horizontal sobel, generate vertical sobel, combine sobels, display, and save where mask is " + i + "x" + i +" - ");
             time = System.nanoTime();
@@ -185,7 +191,7 @@ public class AssignmentTwo {
                                 ConvolutionEnum.COVER_ALL_POINTS, ImageTools.generateSobelScalingFactor(3), true, PixelTools.multiplication),
                         MathTools.addTo255);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(redSobel, PixelTools.rgbRedFromRedValue, BufferedImage.TYPE_INT_RGB),
-                        BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceRed.bmp", "Sobel RGB Differences Red");
+                        BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceRed.png", "Sobel RGB Differences Red");
         index++;
 
 
@@ -196,7 +202,7 @@ public class AssignmentTwo {
                                 ConvolutionEnum.COVER_ALL_POINTS, ImageTools.generateSobelScalingFactor(3), true, PixelTools.multiplication),
                         MathTools.addTo255);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(greenSobel, PixelTools.rgbGreenFromGreenValue, BufferedImage.TYPE_INT_RGB),
-                        BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceGreen.bmp", "Sobel RGB Differences Green");
+                        BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceGreen.png", "Sobel RGB Differences Green");
         index++;
 
         int[][] blueSobel = ImageFileTools.combineIntArrays(
@@ -206,7 +212,7 @@ public class AssignmentTwo {
                                 ConvolutionEnum.COVER_ALL_POINTS, ImageTools.generateSobelScalingFactor(3), true, PixelTools.multiplication),
                         MathTools.addTo255);
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(blueSobel, PixelTools.rgbBlueFromBlueValue, BufferedImage.TYPE_INT_RGB),
-                        BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceBlue.bmp", "Sobel RGB Differences Blue");
+                        BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceBlue.png", "Sobel RGB Differences Blue");
         index++;
 
 
@@ -218,7 +224,7 @@ public class AssignmentTwo {
         }
 
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(combinedSobel, PixelTools.identity, BufferedImage.TYPE_INT_RGB),
-                BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceRGB.bmp", "Sobel RGB Differences All");
+                BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceRGB.png", "Sobel RGB Differences All");
 
         index++;
 
@@ -230,7 +236,7 @@ public class AssignmentTwo {
         }
 
         ImageFileTools.displayAndSave(ImageFileTools.intToBI(combinedSobelGray, PixelTools.identity, BufferedImage.TYPE_INT_RGB),
-                BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceRGBGray.bmp", "Sobel RGB Differences All");
+                BASE_SAVE_FILE_PATH + index(index) + "_sobelDifferenceRGBGray.png", "Sobel RGB Differences All");
 
         index++;
 
