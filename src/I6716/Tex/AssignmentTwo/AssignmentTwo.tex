@@ -1,0 +1,194 @@
+\documentclass{jhwhw}
+\usepackage{amssymb,amsmath,graphicx}
+
+\begin{document}
+
+\title{Computer Vision - Assignment Two}
+\author{Cody Boppert}
+
+\maketitle
+
+\section*{Assignment Two}
+\nopagebreak[4]
+
+\problem{Question 1}
+1. (20 points) Generate the histogram of the image you are using .  If it is a color image,  please first turn it into an intensity image and then generate its histogram.  Try to display your histogram, and make some observations of the image based on its histogram.
+
+\solution
+\part
+Original Image:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/01_original.png}\par
+}
+\part
+Intensity Image
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/02_intensity.png}\par
+}
+
+\part
+Histogram of Intensity Image:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/03_histogram.png}\par
+}
+
+\problem{Question 2}
+Apply the 1x2 operator and Sobel operator to your image and analyze the results of the gradient magnitude images.  Does the Sobel operator have any clear visual advantages over the 1x2 operator?  If you subtract the 1x2 edge image from the Sobel are there any residuals?
+
+\solution
+\part
+2x1 Operator:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/04_2x1.png}\par
+}
+\part
+1x2 Operator:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/05_1x2.png}\par
+}
+\part
+Combined 1x2 and 2x1 Operators (Gradient):
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/06_combinedGradientOperators.png}\par
+}
+\part
+Sobel 3x3:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/07_sobel3x3.png}\par
+}
+\part
+Sobel Minus Gradient Operator:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/08_sobel_minus_gradient.png}\par
+}
+\part
+Sobel Histogram:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/09_sobelHistogram.png}\par
+}
+\part
+Gradient Histogram:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/10_gradientHistogram.png}\par
+}
+\part
+Sobel Minus Gradient Histogram:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/11_sobelMinusGradientHistogram.png}\par
+}
+
+\problem{Question 3}
+Generate edge maps of the above gradient maps (20 points).  You may first generate a histogram of each gradient map,  and only keep certain percentage of pixels  (e.g.  5\% of the highest gradient  values) as edge pixels (edgels) . Use the percentage to find a threshold for the gradient magnitudes. 
+
+\solution
+\part
+Sobel Edge Map 3 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/12_sobelEdgeMap3percent.png}\par
+}
+\part
+Sobel Edge Map 5 Percent of Values
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/14_sobelEdgeMap5percent.png}\par
+}
+\part
+Sobel Edge Map 7 Percent of Values
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/16_sobelEdgeMap7percent.png}\par
+}
+\part
+Sobel Edge Map 9 Percent of Values
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/18_sobelEdgeMap9percent.png}\par
+}
+\part
+Gradient Edge Map 3 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/19_gradientEdgeMap3percent.png}\par
+}
+\part
+Gradient Edge Map 5 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/21_gradientEdgeMap5percent.png}\par
+}
+\part
+Gradient Edge Map 7 Percent of Values
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/23_gradientEdgeMap7percent.png}\par
+}
+\part
+Gradient Edge Map 9 Percent of Values
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/25_gradientEdgeMap9percent.png}\par
+}
+\part
+Sobel Minus Gradient Edge Map 3 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/26_sobelMinusGradientEdgeMap3percent.png}\par
+}
+\part
+Sobel Minus Gradient Edge Map 5 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/28_sobelMinusGradientEdgeMap5percent.png}\par
+}
+\part
+Sobel Minus Gradient Edge Map 7 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/30_sobelMinusGradientEdgeMap7percent.png}\par
+}
+\part
+Sobel Minus Gradient Edge Map 9 Percent of Values:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/32_sobelMinusGradientEdgeMap9percent.png}\par
+}
+
+\problem{Question 4}
+What happens when you increase the size of the kernel to 5x5 , or 7x7? Discuss computational cost (in terms of members of operations, and the real machine running times), edge detection results and sensitivity to noise, etc. Note that your larger kernel should still be an edge detector.
+
+\solution
+\part
+Sobel 5x5:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/33_sobel5x5.png}\par
+}
+\part:
+Sobel 7x7:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/34_sobel7x7.png}\par
+}
+\part
+Sobel 9x9:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/35_sobel9x9.png}\par
+}
+
+\problem{Question 5}
+Suppose you apply the Sobel operator to each of the RGB color planes comprising the image.  How might you combine these results into a color edge detector?  Do the resulting edge differ from the gray scale results?  How and why?
+
+\solution
+\part
+Sobel Difference Red:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/36_sobelDifferenceRed.png}\par
+}
+\part
+Sobel Difference Green:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/37_sobelDifferenceGreen.png}\par
+}
+\part
+Sobel Difference Blue:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/38_sobelDifferenceBlue.png}\par
+}
+\part
+Sobel Difference RGB:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/39_sobelDifferenceRGB.png}\par
+}
+\part
+Sobel Difference RGB to Gray:
+{\centering
+	\includegraphics[width=500px]{../../Images/AssignmentTwo/40_sobelDifferenceRGBGray.png}\par
+}
+\end{document}

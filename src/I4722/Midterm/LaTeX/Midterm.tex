@@ -1,0 +1,210 @@
+\documentclass{jhwhw}
+\usepackage{amssymb,amsmath,graphicx}
+
+\begin{document}
+
+\title{High Performance Networks - Midterm Exam}
+\author{Cody Boppert}
+
+\maketitle
+
+\section*{Midterm Exam}
+\nopagebreak[4]
+
+\problem{Question 1}
+1. (30 pts) The scenario in Figure 1 shows how the data transfer takes place from a sender to a receiver in a window-based protocol, under packet loss and arbitrary delay conditions. The parameters assumed in the scenario are: sender window size $|W_{s}| = 1$, receiver window size $|W_{r}| = 1$, and acknowledgement $ack_{th} = 1$. The $\#$ of 'sequence number' bits used in the protocol is $b$. The sequence number values assigned to the various packets are marked as '*' in the figure.
+
+\includegraphics[width=450px]{../figure1.png}\par
+
+Note that a packet delay $D$ over the network is : $D = T_{tx} + T_{prop} + T$. The packet queuing and scheduling effects captured in $T$ are random, arising from access to the shared buffers and/or communication link. So, we have: $(T_{tx} + T_{prop}) < D \leq D_{m}$. Also, assume that $T_{tx}$ is the same for both the data and ack packets.
+
+\solution
+\part
+\textbf{A:} Show the sequence number values in the packets for the case of $b = 2$ and $|W_{s}| = 2$, with a goback-N based packet retransmission strategy. Also, show the packet deliveries occurring at the application receiver $A(receiver)$.
+
+Using Figure:
+ 
+\begin{tabular}{l c r}
+Sender & Network & Receiver \\
+m(d-A, 0) & & \\
+& m(d-A, 0) & \\
+& & m(d-A, 0) \\
+& & a(0) \\
+& a(0) & \\
+m(d-A, 0) & & \\
+& m(d-A, 0) & \\
+& & m(d-A, 0) \\
+& & a(0) \\
+& a(0) & \\
+a(0) & & \\
+m(d-B, 1) & & \\
+& m(d-B, 1) & \\
+& & m(d-B, 1) \\
+& & a(1) \\
+& a(1) & \\
+a(1) & & \\
+m(d-C, 2) & & \\
+& m(d-C, 2) & \\
+& & m(d-C, 2) \\
+& & a(2) \\
+m(d-C, 2) & a(2) & \\
+& a(2) - m(d-C, 2) & \\
+& a(2) & m(d-C, 2) \\
+& a(2) & a(2) \\
+& a(2) - a(2) & \\
+a(2) & a(2) & \\
+m(d-D, 3) & a(2) & \\
+& m(d-D, 3) - a(2) & \\
+& a(2) & m(d-D, 3) \\
+& a(2) & a(3) \\
+& a(2) - a(3) & \\
+a(3) & a(2) & \\
+m(d-E, 0) & a(2) & \\
+& m(d-E, 0) - a(2) & \\
+a(2) & & \\
+m(d-F, 1) & & \\
+& m(d-F, 1) & \\
+& & m(d-F, 1) \\
+& & a(1) \\
+& a(1) & \\
+a(1) & & \\
+
+\end{tabular}
+
+\part
+\textbf{B:} In the scenario given as your answer for \textbf{A}, does the protocol work correctly or not? Give reasons.
+
+The scenario does not work correctly with the timing of the packets in figure 1 and a go-back-n protocol with $|W_{S}| = 2$ and $b = 2$. With a sender window of size 2 the protocol would have the transmitter sending more than one packet at a time but this does not happen here. Also you can see that the receiver acknowledges the receipt of m(d-F, 1) which should have been discarded as m(d-E, 0) had not been received and acknowledged yet.
+
+\part
+\textbf{C:} If $D_{m}$ is the maximum packet delay in the network, what is the maximum allowed packet generation rate of $A(sender)$? Your formula for the maximum rate should be expressed in terms of $|W_{S}|$.
+
+Suppose $D_{M} = 10ms$, $|W_{S}| = 3$, and $T_{X} = 2ms$ then we can see
+
+\begin{tabular} { l r }
+Time & Event \\
+0ms & send(A) \\
+2ms & send(B) \\
+4ms & send(C) \\
+10ms & ack(A) \\
+12ms & ack(B) \\
+14ms & ack(C) \\
+\end{tabular}
+
+So we can see that the max would be 3 packets in 14ms and we can arrive at the equation for the max generation rate.
+
+$MGR = \frac{|W_{S}|}{((|W_{S}| - 1) * T_{X}) + D_{M}} \frac{packets}{ms}$
+
+
+\problem{Question 2}
+2. (20 pts) Consider a video distribution session from a set of $N$ sources to a set of $M$ receivers, where $N \geq 2$ and $M \geq 1$. We consider two types of rate control schemes to determine congestion status in the network, as given below (see figure 2):
+
+\underline{$R_{end}$} --- Employs end-to-end feedback information from receivers to sources about packet loss;
+
+\underline{$R_{net}$} --- Obtains bandwidth availability information directly from the network and compares it with the sending rates of sources.
+
+\includegraphics[width=450px]{../figure2.png}\par
+
+\solution
+Illustrate the truth or otherwise of the following statements pertaining to a comparative analysis of the $R_{end}$ and $R_{net}$ schemes (consider the effects of randomly varying cross-traffic in the network path):
+
+\part
+\hspace{30pt} i) $R_{end}$ reacts faster than $R_{net}$ when a congestion occurs in the network;
+
+This is false because the bandwidth availability information will receive the knowledge of the spike in congestion prior to the packet loss threshold being hit by a receiver. The $R_{net}$ algorithm can signal to the sources to slow down to reduce congestion as soon as a spike is detected where the $R_{end}$ must wait for a receiver to hit the loss threshold to send the end to end message back over the congested network to signal the sources to slow down their transmission rates.
+
+\part
+\hspace{30pt} ii) $R_{end}$ is more stable in its traffic control behavior than $R_{net}$ (i.e., results in less oscillatory behavior);
+
+True because it takes longer for the control message to receive the sources and as such they react in a more controlled manner with less oscillation.
+
+\part
+\hspace{30pt} iii) $R_{net}$ is easier to implement in current 'best effort' internet than $R_{end}$.
+
+False because 'best effort' internet has no concept of the available bandwidth and features an incredible number of nodes and hops and $R_{end}$ requires the simple concepts of a lost packet threshold which is easy to observe at the receiver side and sending a return lost packet message to the source(s). 
+
+\problem{Question 3}
+3. (15 pts) Give a mathematical definition of the concept: 'long-term stationarity of a traffic flow'. Briefly explain how the stationarity property is useful in estimating the available bandwidth on a network path.
+
+\solution
+Stationarity is a measure of the throughput of a connection (the traffic flow). A traffic flow can be considered to have the property of stationarity if the throughput remains constant. The stationarity property is useful in estimating the available bandwidth because probe packets can be used to compare transfer times to the known stationarity and determine whether the network is under congestion.
+
+\problem{Question 4}
+4. (20 pts) Choose the most appropriate answer in each of the following cases (with a \underline{\textit{brief}} justification).
+
+\solution
+\part
+\textbf{A:} When a network element $E$ employs non-work conserving packet scheduling\footnote{'Non-work conserving' means that even if the input queue of $E$ contains packets, the scheduler may sometimes choose not to send a packet through $E$ during a transmission slot.}, the mean packet delay through $E$:
+
+\hspace{30pt} \textbf{i) Always increases}
+
+\hspace{30pt} ii) Always decreases
+
+\hspace{30pt} iii) Is not affected at all
+
+\hspace{30pt} iv) May increase or decrease depending on the traffic pattern
+
+The mean packet delay always increases because a work conserving packet scheduler will always transfer a packets in the queue where a non-work conserving packet scheduler will delay a packet until it is eligible for transmission. Just one delay is enough to increase the mean for all the packets and thus, assuming one or more delays for eligibility, the mean packet delay always increases. 
+
+\part
+\textbf{B:} For a TCP connection set up on a network path, an increase of packet loss rate by a factor $\delta$ in the path causes the TCP throughput rate $Q$ to reduce to $Q - \Delta Q$, where:
+
+\hspace{30pt} i) $\frac{\Delta Q}{Q} = \delta$ (i.e., $Q$ reduces by the same amount as the loss increase)
+
+\hspace{30pt} \textbf{ii) $\frac{\Delta Q}{Q} > \delta$ (i.e., $Q$ reduces exponentially w.r.t loss increase)}
+
+\hspace{30pt} iii) $\frac{\Delta Q}{Q} < \delta$ (i.e., $Q$ reduces by a less amount than the loss increase)
+
+\hspace{30pt} iv) $\frac{\Delta Q}{Q} = 0$ (i.e., $Q$ is not affected by the loss increase).
+
+Let $Q \approxeq 1.22 * \frac{MSS}{RTT*\sqrt{Loss}}$ be an approximation of the throughput \footnote{Slide 5 - http://cs.brown.edu/courses/cs196-5/f13/lectures/14-congestion.pdf} where $MSS$ is maximum segment size and $RTT$ is round trip time. Assume $MSS$ and $RTT$ are constant, and $Q > 0$, $MSS > 0$, $RTT > 0$, $Loss > 0$ and $\delta > 0$, then:
+
+let $C = 1.22 * \frac{MSS}{RTT}$ and 
+
+$Q_{1} \approxeq C * \frac{1}{\sqrt{Loss}}$ and
+
+$Q_{2} \approxeq C * \frac{1}{\sqrt{\delta * Loss}}$ and
+
+$\Delta Q = Q_{1} - Q_{2}$ then
+
+$\frac{\Delta Q}{Q} = \frac{Q_{1} - Q_{2}}{Q_{1}} = \frac{\frac{1}{\sqrt{Loss}} - \frac{1}{\sqrt{\delta * Loss}}}{\frac{1}{\sqrt{Loss}}} = 1 - \frac{\sqrt{Loss}}{\sqrt{\delta * Loss}}$
+
+let: $MSS = 1000$ (bytes), $RTT = 1000$ (ms), and $Loss = .01$ (percentage) and $\delta = 10$ (percentage)
+
+$Q_{1} \approxeq 12.2$ (bytes/ms)
+
+$Q_{2} \approxeq 3.86$ (bytes/ms)
+
+$\Delta Q = 12.2 - 3.86 = 8.34$ (bytes/ms)
+
+$\frac{\Delta Q}{Q} = \frac{8.34}{12.2} = 0.68 * 100 = 68\%$ and thus
+
+$\frac{\Delta Q}{Q} > \delta$
+
+\part
+\textbf{C:} Given a TCP implementation on an IP-based network (IP: Internet Protocol), the choice of TCP packet retransmission timeout period depends on:
+
+\hspace{30pt} i) Packet loss probability in the IP network
+
+\hspace{30pt} \textbf{ii) Packet round-trip-time through the IP network}
+
+\hspace{30pt} iii) Size of packets sent through the IP network
+
+\hspace{30pt} iv) How fast the TCP sender generates IP packets
+
+Packet round trip time determines how long the sender will wait for the ACK response in order to determine whether or not to retransmit the packet.
+
+\part
+\textbf{D:} Traffic smoothing on a date flow $f$ is employed by a network element, for the following reason:
+
+\hspace{30pt} \textbf{i) To make a better estimate of the bandwidth needs for $f$}
+
+\hspace{30pt} ii) To reduce the number of packets carried by $f$
+
+\hspace{30pt} iii) To reduce the bandwidth allocation for $f$
+
+\hspace{30pt} iv) To ensure timely delivery of the packets of $f$
+
+Better estimates of the bandwidth need increases the overall utilization of the network bandwidth.
+
+\end{document}

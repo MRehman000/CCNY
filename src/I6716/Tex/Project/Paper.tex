@@ -1,0 +1,102 @@
+\documentclass[twocolumn,nofootinbib,%
+notitlepage,10pt]{report}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Door Detection}
+\author{Cody Boppert\\City College of New York}
+
+\maketitle
+
+\begin{abstract}
+Door detection is a complex computer vision and artificial intelligence problem. Door detection work has focused primarily on indoor environments only. My project proposes a solution for the detection of doors in any environment. This paper examines various methods employing feature detection and supervised learning in order to create a comprehensive door detection algorithm. Using a discriminative data set I employ supervised learning and feature detection to recognize doors in a variety of styles, from a variety of angles, and in a variety of environments. Finally employing computer vision techniques the algorithm presents the user with the approximate location of the door in relation to the camera when possible using stereo vision geometry.
+\end{abstract}
+
+\section{Introduction}
+Door detection is an important problem in the computer vision and artificial intelligence fields. Many obvious uses exist in the fields of navigation and physical security. A high quality indoor and outdoor door detection algorithm could assist the blind, and help robots navigate buildings and disaster areas. The algorithm could allow for security systems which set themselves up by observing entrances and exits to areas under surveillance. Finally door detection is an important part of building mapping processes.\\
+\indent Previous research has primarily focused upon door detection from indoor environments. This is an important start but we hope to provide an algorithm which can detect doors in more complex and multi featured environments to provide true navigational capabilities. A quality door detection algorithm combined with stereo vision geometry can not only detect the door in the visual space but produce information as to where the door is in relation to the viewer. This information includes location and distance from the observer.\\
+\indent In developing the dataset we realize a variety of the obstacles which face the successful development of this application. Images from different  environments result in doors at drastically different scales. The doors are featured in a variety of states including open, closed, in use, and obstructed. Glass doors can feature a wide variety of features behind the door. The wide variety of doors include doors with arches, revolving doors, rectangular doors, glass doors, doors with multiple panes, and single paned doors. Doors come in a variety of colors and with a variety of embellishment. Handles on doors are not consistent and might feature push bars, pull bars, and knobs. Automatic doors feature no handles at all.\\
+\indent A variety of techniques exist to help us create a coherent model of a door. The pyramid representation of an image uses interpolation and decimation to create representations of an image at various scales. Edge detection and corner detection methods allow us to find the important features of positive images. A bag of words model allows us to take these features and search for them within images which have no label.\\
+\indent In order for this algorithm to result in an effective navigation system the computations per image observed must happen in a quick fashion for near real time processing of the environment. Dealing with such a large range of features makes this very difficult. Processing may include converting to gray scale, resizing, feature detection, and comparison to a large "vocabulary" of learned features. Finally the stereo vision geometry techniques for calculating the distance of the perceived doors from the viewer add to the work load.\\
+\indent This paper starts with an overview of work which precedes it, goes into the methodology applied by the author to the problem, discusses the results obtained, and concludes with a discussion and conclusion.
+
+\section{Prior Work}
+The majority of previous work has focused on door detection within indoor environments.\\
+\indent Mu{\~n}oz-Salinas, Aguirre, Garc{\'i}a, and Gonz{\`a}lez \cite{wseas} employed fuzzy logic and computer vision methods to develop an indoor door detection algorithm. Their strategy focused on developing a feature detector which recognized single and double door frames. Double door frames are single door frames with an outer wrapper. You can imagine it as finding edges on both the inner and outer portions of the door frame. These are the fuzzy concepts of their fuzzy logic. They employ the Canny edge detector and Hough transform to detect the primary segments of the image. A combination of fuzzy components, vertical segment and horizontal segment, they accommodate for various levels of illumination and deformations in general door shape caused by the degrees of freedom of the robots camera. Their initial heuristics assume doors are tall and using Euclidean distance they calculate an approximate distance and size of each object of interest detected. Finally, they test to see if vertical and horizontal segments detected combine to form a door. Their results were impressive and featured a positive detection rate of 90.5\% and a false positive rate of only 3.5\%. Their rates of detection were similarly impressive with analysis of observed images taking an average of only 160ms. Fast enough for a real time navigation system.\\
+\indent In 2007 Murillo, Ko{\v s}eco{\' a} and C. Sag{\" u}{\' e}s \cite{murillo} presented a door detection algorithm which relies only upon visual input. Constraining their environments to man made interiors they employed bayesian analysis to compute $P(Door|\theta)$. A model based approach was used to develop a description of a door object. A ratio of width to height is calculated from objects of interest found through line segment analysis and a compatible corner heuristic set. A color segmented labeled learning set was developed to train the model and a variety of likelihood approximations were employed to find an optimal solution for determining whether a pixel was part of a door object including Gaussian and histogram based approaches. Finally the shape of the interest objects was taken into account and the results were used in combination with the appearance based approach. Thresholding was utilized and the best results were obtained with a threshold value equal to the median value of the likelihoods. Their best results included positive detection rates of approximately 87\%. Unfortunately the methods with the best rates of positive detection included false positive rates of approximately 30\%.\\
+\indent More recently, Mahmood and Kuwar \cite{mahmood} employed a self organizing map to detect doors in a  variety of environments. A simple five step process was employed. First, using the canny edge detector they produced an edge map which they employed a line detection algorithm upon. Using their labeled lines they computer distances between vertical lines and horizontal lines. Their heuristics included an assumption that doors are set back from the wall which they reside in, a gap between the bottom of the door and the floor, and a minimum threshold for the distance between the vertical edges of a door. Using these features they trained a Kohonen self-organized map which they then proceeded to test on images. An initial training time of less than five minutes preceded pattern classification rates of 0.0012 seconds with an accuracy rate of approximately 95\%. The data set was size standardized to 1200x1600 pixels.\\
+
+\section{Methodology}
+Unfortunately, building an object classification algorithm is far out of the scope of this course. The wide variety of artificial intelligence and pattern recognition algorithms would require an extensive amount of learning and testing. I had hoped to build a discriminative model but with such a wide variety of styles of doors, at such a wide variety of scales, the dataset might necessarily be cumbersomely large. Building a uniform dataset also would prove difficult, and performing learning on a dataset with such a wide variety of image sizes is something I have not had the time to research. All previous work with high detection rates appears to perform well only on interior environments and learning to filter the noise from the doors in crowded exterior scenes would require a vast amount of knowledge, time, and luck. Unfortunately it happens to be what I spent a large amount of time researching.\\
+\indent The dataset I collected features a wide variety of doors in the positive folder. Some of from the interior and many are from the exterior. There are, perhaps, a disproportionate number of revolving doors. The doors come in a variety of styles, scales, shapes, colors, and with varying degrees of occlusion.\\
+\indent Despite being unable to complete a door detecting classifier within the time allotted and with my current skill set I hope to employ this dataset to undertake some of the other tasks I had hoped my system would perform. These include stitching together stereo images using a corner detection algorithm.
+
+\subsection{Converting the Image to Gray Scale}
+The first step I undertook was converting the original images to gray scale. I used the intensity value formula provided by Professor Zhu \cite{class}. I then rounded the value to get an approximate intensity value between 0 and 255. A gray RGB value is one where the values of $R$, $G$, and $B$ are all equal so I shifted the intensity value to create a gray RGB value from the intensity. \\
+$I = 0.299 * R + 0.587 * G + 0.114 * B$
+
+\subsection{Applying the Sobel Operator}
+Using the Sobel operator presented in class \cite{class} and a convolution algorithm created for assignment two I have successfully generated high quality edge maps of the data set I had collected. To generate my edge maps I take two Sobel convolutions of the intensity images. The first Sobel operator looks at the vertical differences and the second looks at the horizontal differences. Then I add the values for a final edge map. I use a Sobel mask generation method built upon information provided by Adam Bowen \cite{stack} which was based upon analysis of the Intel IPP library. I also generate a Sobel scaling factor. Finally I set my convolution algorithm to cover all points which leaves the image the same dimensions.\\
+
+\subsection{The Gaussian}
+In an attempt to build from the ground up a corner and feature detector I learned about the Gaussian.
+$G(x,y;\sigma) = \frac{1}{2\pi}e^{\frac{x^{2}+y^{2}}{2\sigma^{2}}}$\\
+Using this and I could find directional derivatives to produce image gradients which I could then apply as a mask over an image in an attempt to find corners.
+
+\section*{Results}
+
+\section*{Discussion}
+
+\section*{Conclusion}
+Unfortunately time has strangled my project. I have a variety of images which I have included with this file so you can see some of the edge maps generated. I am sending this now in an attempt to send something but I hope to work on it more and send more later as well.
+
+\begin{thebibliography}{30}
+
+\bibitem{wseas}
+Rafael Mu{\~n}oz-Salinas, Eugenio Aguirre, Miguel Garc{\'i}a,  Antonio Gonz{\`a}lez\\
+\textbf{Door Detection Using Computer Vision and Fuzzy Logic}\\
+University of Granada\\
+\url{http://decsai.ugr.es/~salinas/publications/wseas.pdf}
+
+\bibitem{murillo}
+A.C. Murillo, J. Ko{\v s}eck{\' a}, J.J. Guerrero C. Sag{\" u}{\' e}s\\
+\textbf{Door Detection in Images Integrating Appearance and Shape Cues}\\
+\emph{Workshop: From Sensors to Human Spatial Concepts, pages 41-48, IEEE/RSJ International Conference on Intelligent Robots and Systems, San Diego - USA, 2007}\\
+\url{http://www.researchgate.net/profile/Josechu_Guerrero/publication/229069513_Door_detection_in_images_integrating_appearance_and_shape_cues/file/60b7d51b03ccc4ebbd.pdf}
+
+\bibitem{mahmood}
+F. Mahmood, F. Kuwar\\
+\textbf{A Self-Organizing Neural Scheme for Door Detection in Different Environments}\\
+\emph{International Journal of Computer Applications (0975 - 8887)}\\
+\emph{Volume 60- No. 9, December 2012}\\
+College of E\&ME\\
+\url{http://arxiv.org/pdf/1301.0432.pdf}
+
+\bibitem{book}
+Richard Szeliski\\
+\textbf{Computer Vision: Algorithms and Applications}\\
+Springer\\
+September 3rd, 2010 Draft\\
+\url{http://szeliski.org/Book/drafts/SzeliskiBook_20100903_draft.pdf}
+
+\bibitem{class}
+Professor Zhigang Zhu\\
+\emph{City College of New York}\\
+\textbf{Computer Vision}\\
+CSC I6716\\
+Spring 2014\\
+\url{http://www-cs.engr.ccny.cuny.edu/~zhu/CSCI6716-2014s/VisionCourse-Spring-2014}
+
+\bibitem{stack}
+Adam Bowen\\
+\emph{StackOverflow Response}\\
+\url{http://stackoverflow.com/a/10032882}
+
+\end{thebibliography}
+
+\end{document}
